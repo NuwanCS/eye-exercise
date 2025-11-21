@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
+    <title>Vision Therapy - Sequential Character Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #1a2f4f 50%, #0a1628 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .config-screen {
+            background: linear-gradient(180deg, #1a3d6b 0%, #0d2847 50%, #1a3d6b 100%);
+            border: 3px solid #2a5a8f;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 1100px;
+            width: 100%;
+            box-shadow: 0 0 40px rgba(0, 150, 255, 0.3);
+            position: relative;
+        }
+        
+        .config-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(100, 180, 255, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+            border-radius: 15px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #ffffff;
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(100, 180, 255, 0.5);
+            margin-bottom: 15px;
+        }
+        
+        .header h2 {
+            color: #ffffff;
+            font-size: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            display: inline-block;
+            padding: 8px 25px;
+            border: 2px solid #4a7ba7;
+            border-radius: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px 50px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .control-row {
+            display: flex;
+            align-items: center;
+            /* justify-content: space-between; */
+            padding: 10px 0;
+        }
+        
+        .control-label {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 500;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            min-width: 180px;
+        }
+        
+        .control-input {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* Slider styling to match the image */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .slider-button {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            min-height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3a7db8 0%, #2a5d98 100%);
+            border: 2px solid #5a9dd8;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            transition: all 0.2s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .slider-button:hover {
+            background: linear-gradient(135deg, #4a8dc8 0%, #3a6da8 100%);
+            transform: scale(1.05);
+        }
+        
+        .slider-button:active {
+            transform: scale(0.95);
+        }
+        
+        input[type="range"] {
+            width: 250px;
+            height: 8px;
+            border-radius: 10px;
+            background: linear-gradient(to right, #2a5d98 0%, #4a8dc8 100%);
+            outline: none;
+            border: 1px solid #1a3d68;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffffff 0%, #d0e8ff 100%);
+            cursor: pointer;
+            border: 3px solid #2a5d98;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffffff 0%, #d0e8ff 100%);
+            cursor: pointer;
+            border: 3px solid #2a5d98;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+        
+        .value-display {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Color picker styling */
+        .color-picker-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        input[type="color"] {
+            width: 80px;
+            height: 40px;
+            border: 3px solid #4a7ba7;
+            border-radius: 5px;
+            background-color: transparent;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+        
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 3px;
+        }
+        
+        /* Radio button styling */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .radio-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #ff00ff;
+            cursor: pointer;
+        }
+        
+        .radio-option label {
+            color: #ffffff;
+            font-size: 15px;
+            cursor: pointer;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Checkbox styling */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            accent-color: #ff00ff;
+            cursor: pointer;
+        }
+        
+        .checkbox-label {
+            color: #ffffff;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Preview box */
+        .preview-section {
+            position: absolute;
+            right: 40px;
+            bottom: 120px;
+            text-align: center;
+        }
+        
+        .preview-label {
+            color: #ffffff;
+            font-size: 16px;
+            margin-bottom: 10px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .preview-box {
+            width: 120px;
+            height: 120px;
+            background: #000000;
+            border: 3px solid #4a7ba7;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+        }
+        
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn {
+            padding: 15px 50px;
+            font-size: 18px;
+            font-weight: bold;
+            border: 3px solid #4a7ba7;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            min-width: 120px;
+            min-height: 50px;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-launch {
+            background: linear-gradient(135deg, #5a9dd8 0%, #3a7db8 100%);
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .btn-launch:hover {
+            background: linear-gradient(135deg, #6aadd8 0%, #4a8dc8 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+        }
+        
+        .btn-exit {
+            background: linear-gradient(135deg, #7a9db8 0%, #5a7d98 100%);
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .btn-exit:hover {
+            background: linear-gradient(135deg, #8aadc8 0%, #6a8da8 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Game area */
+        .game-area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            width: 100dvw; /* Dynamic viewport for mobile */
+            height: 100vh;
+            height: 100dvh; /* Dynamic viewport for mobile */
+            background-color: #2d2d2d;
+            z-index: 2000;
+            display: none;
+            overflow: hidden;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        .game-area.active {
+            display: block;
+        }
+        
+        .close-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            color: white;
+            border: 2px solid #ff5252;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s;
+        }
+        
+        .close-button:hover {
+            background: linear-gradient(135deg, #ff5252 0%, #e53935 100%);
+            transform: translateY(-2px);
+        }
+        
+        .character-circle {
+            position: absolute;
+            border-radius: 50%;
+            background-color: #333333;
+            border: 2px solid #2196F3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            color: #ffffff;
+            z-index: 1;
+        }
+        
+        .character-circle:active {
+            transform: scale(0.95);
+        }
+        
+        .character-circle:hover {
+            background-color: #4a4a4a;
+            border-color: #64b5f6;
+            transform: scale(1.1);
+        }
+        
+        .character-circle.correct {
+            animation: correctFade 0.5s ease-out forwards;
+        }
+        
+        .character-circle.wrong {
+            background-color: #5d4037;
+            border-color: #f44336;
+            animation: wrongShake 0.5s ease-out;
+        }
+        
+        @keyframes correctFade {
+            0% { opacity: 1; transform: scale(1); }
+            50% { background-color: #2e7d32; border-color: #4caf50; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+        
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .progress-display {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        
+        .progress-display > * {
+            pointer-events: auto;
+        }
+        
+        .next-character {
+            background: linear-gradient(135deg, #3e2723 0%, #5d4037 100%);
+            border: 3px solid #ff9800;
+            padding: 15px 30px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 32px;
+            color: #ffb74d;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+        }
+        
+        .progress-text {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        
+        .completion-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: #4caf50;
+            text-align: center;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px 60px;
+            border-radius: 15px;
+            border: 3px solid #4caf50;
+            display: none;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .preview-section {
+                position: static;
+                margin: 30px auto 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .config-screen {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .header h2 {
+                font-size: 16px;
+                padding: 6px 15px;
+            }
+            
+            .control-label {
+                font-size: 14px;
+                min-width: 140px;
+            }
+            
+            input[type="range"] {
+                width: 150px;
+            }
+            
+            .value-display {
+                font-size: 18px;
+            }
+            
+            .btn {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .next-character {
+                font-size: 24px;
+                padding: 10px 20px;
+            }
+            
+            .progress-text {
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .config-screen {
+                padding: 15px;
+            }
+            
+            .controls-grid {
+                gap: 15px;
+            }
+            
+            .control-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .control-label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="config-screen">
+        <div class="header">
+            <h1>Vision Therapy Game</h1>
+            <h2>Sequential Character Parameters</h2>
+        </div>
+        
+        <div class="controls-grid">
+            <!-- Left Column -->
+            <div>
+                <!-- Number of Stimuli -->
+                <div class="control-row">
+                    <div class="control-label">Number of Stimuli</div>
+                    <div class="control-input">
+                        <div class="slider-container">
+                            <button class="slider-button" onclick="adjustValue('numStimuli', -1)">◄</button>
+                            <input type="range" id="numStimuli" min="10" max="52" value="26">
+                            <button class="slider-button" onclick="adjustValue('numStimuli', 1)">►</button>
+                            <span class="value-display" id="numStimuliValue">26</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Background Color -->
+                <div class="control-row">
+                    <div class="control-label">Background Color</div>
+                    <div class="control-input">
+                        <div class="color-picker-container">
+                            <input type="color" id="bgColor" value="#000000">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Speed -->
+                <div class="control-row">
+                    <div class="control-label">Speed</div>
+                    <div class="control-input">
+                        <div class="slider-container">
+                            <button class="slider-button" onclick="adjustValue('speed', -1)">◄</button>
+                            <input type="range" id="speed" min="1" max="10" value="1">
+                            <button class="slider-button" onclick="adjustValue('speed', 1)">►</button>
+                            <span class="value-display" id="speedValue">1</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stimuli Size -->
+                <div class="control-row">
+                    <div class="control-label">Stimuli Size</div>
+                    <div class="control-input">
+                        <div class="slider-container">
+                            <button class="slider-button" onclick="adjustValue('stimuliSize', -1)">◄</button>
+                            <input type="range" id="stimuliSize" min="20" max="100" value="40">
+                            <button class="slider-button" onclick="adjustValue('stimuliSize', 1)">►</button>
+                            <span class="value-display" id="stimuliSizeValue">40</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stimuli Type -->
+                <div class="control-row">
+                    <div class="control-label">Stimuli Type</div>
+                    <div class="control-input">
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="typeUpper" name="stimuliType" value="uppercase" checked>
+                                <label for="typeUpper">Letters Upper</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="typeLower" name="stimuliType" value="lowercase">
+                                <label for="typeLower">Letters Lower</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="typeMixed" name="stimuliType" value="mixed">
+                                <label for="typeMixed">Letters Upper/Lower</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="typeNumbers" name="stimuliType" value="numbers">
+                                <label for="typeNumbers">Numbers</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="typeNumbersLetters" name="stimuliType" value="numbersletters">
+                                <label for="typeNumbersLetters">Numbers/Letters</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contrast Sensitivity -->
+                <div class="control-row">
+                    <div class="control-label">Contrast Sensitivity</div>
+                    <div class="control-input">
+                        <div class="slider-container">
+                            <button class="slider-button" onclick="adjustValue('contrast', -1)">◄</button>
+                            <input type="range" id="contrast" min="10" max="100" value="100">
+                            <button class="slider-button" onclick="adjustValue('contrast', 1)">►</button>
+                            <span class="value-display" id="contrastValue">100</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div>
+                <!-- Grid, Tracer, Central Fixation, Central Flash -->
+                <div class="control-row">
+                    <div class="control-label">Grid</div>
+                    <div class="control-input">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="grid">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-row">
+                    <div class="control-label">Tracer</div>
+                    <div class="control-input">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="tracer">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-row">
+                    <div class="control-label">Central Fixation</div>
+                    <div class="control-input">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="centralFixation">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-row">
+                    <div class="control-label">Central Flash</div>
+                    <div class="control-input">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="centralFlash">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stimuli Color -->
+                <div class="control-row">
+                    <div class="control-label">Stimuli Color</div>
+                    <div class="control-input">
+                        <div class="color-picker-container">
+                            <input type="color" id="stimuliColor" value="#0000ff">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Direction -->
+                <div class="control-row">
+                    <div class="control-label">Direction</div>
+                    <div class="control-input">
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="dirCW" name="direction" value="cw">
+                                <label for="dirCW">CW</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="dirCCW" name="direction" value="ccw">
+                                <label for="dirCCW">CCW</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="dirBoth" name="direction" value="both" checked>
+                                <label for="dirBoth">Both</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rotator Size -->
+                <div class="control-row">
+                    <div class="control-label">Rotator Size</div>
+                    <div class="control-input">
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="sizeLarge" name="rotatorSize" value="large" checked>
+                                <label for="sizeLarge">Large</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="sizeSmall" name="rotatorSize" value="small">
+                                <label for="sizeSmall">Small</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stimuli Persistence -->
+                <div class="control-row">
+                    <div class="control-label">Stimuli Persistence</div>
+                    <div class="control-input">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="stimuliPersistence">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reverse Sequence -->
+                <div class="control-row">
+                    <div class="control-label">Reverse Sequence</div>
+                    <div class="control-input">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="reverseSequence">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Preview Section -->
+        <div class="preview-section">
+            <div class="preview-label">Preview</div>
+            <div class="preview-box" id="previewBox"></div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-launch" onclick="launchGame()">Launch</button>
+            <button class="btn btn-exit" onclick="window.close()">Exit</button>
+        </div>
+    </div>
+    
+    <!-- Game Area -->
+    <div class="game-area" id="gameArea">
+        <button class="close-button" onclick="closeGame()">✕ Close</button>
+        <div class="progress-display">
+            <div class="next-character" id="nextChar">-</div>
+            <div class="progress-text">
+                Progress: <span id="progress">0</span> / <span id="total">0</span>
+            </div>
+        </div>
+        <div class="completion-message" id="completionMessage">
+            🎉 Congratulations! You've completed the sequence! 🎉
+        </div>
+    </div>
+
+    <script>
+        let currentSequence = [];
+        let currentIndex = 0;
+        let gameActive = false;
+        let characters = [];
+        let animationId = null;
+        
+        // Initialize slider displays
+        function initializeSliders() {
+            updateSliderDisplay('numStimuli');
+            updateSliderDisplay('speed');
+            updateSliderDisplay('stimuliSize');
+            updateSliderDisplay('contrast');
+        }
+        
+        function updateSliderDisplay(id) {
+            const slider = document.getElementById(id);
+            const display = document.getElementById(id + 'Value');
+            if (slider && display) {
+                display.textContent = slider.value;
+            }
+        }
+        
+        function adjustValue(id, delta) {
+            const slider = document.getElementById(id);
+            const min = parseInt(slider.min);
+            const max = parseInt(slider.max);
+            let newValue = parseInt(slider.value) + delta;
+            newValue = Math.max(min, Math.min(max, newValue));
+            slider.value = newValue;
+            updateSliderDisplay(id);
+            
+            // Update num stimuli based on selected type
+            if (id === 'numStimuli') {
+                updateNumStimuliBasedOnType();
+            }
+        }
+        
+        // Add event listeners for sliders
+        document.getElementById('numStimuli').addEventListener('input', function() {
+            updateSliderDisplay('numStimuli');
+        });
+        
+        document.getElementById('speed').addEventListener('input', function() {
+            updateSliderDisplay('speed');
+        });
+        
+        document.getElementById('stimuliSize').addEventListener('input', function() {
+            updateSliderDisplay('stimuliSize');
+        });
+        
+        document.getElementById('contrast').addEventListener('input', function() {
+            updateSliderDisplay('contrast');
+        });
+        
+        // Update num stimuli when type changes
+        document.querySelectorAll('input[name="stimuliType"]').forEach(radio => {
+            radio.addEventListener('change', updateNumStimuliBasedOnType);
+        });
+        
+        function updateNumStimuliBasedOnType() {
+            const type = document.querySelector('input[name="stimuliType"]:checked').value;
+            const numStimuliSlider = document.getElementById('numStimuli');
+            
+            let maxStimuli;
+            switch(type) {
+                case 'uppercase':
+                case 'lowercase':
+                    maxStimuli = 26;
+                    break;
+                case 'mixed':
+                    maxStimuli = 52;
+                    break;
+                case 'numbers':
+                    maxStimuli = 35;
+                    break;
+                case 'numbersletters':
+                    maxStimuli = 61; // 26 letters + 35 numbers
+                    break;
+                default:
+                    maxStimuli = 26;
+            }
+            
+            numStimuliSlider.max = maxStimuli;
+            if (parseInt(numStimuliSlider.value) > maxStimuli) {
+                numStimuliSlider.value = maxStimuli;
+                updateSliderDisplay('numStimuli');
+            }
+        }
+        
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+        
+        function generateSequence(type, count) {
+            let fullSequence;
+            switch(type) {
+                case 'uppercase':
+                    fullSequence = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+                    break;
+                case 'lowercase':
+                    fullSequence = 'abcdefghijklmnopqrstuvwxyz'.split('');
+                    break;
+                case 'mixed':
+                    fullSequence = [];
+                    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                    for (let i = 0; i < letters.length; i++) {
+                        fullSequence.push(letters[i]);
+                        fullSequence.push(letters[i].toLowerCase());
+                    }
+                    break;
+                case 'numbers':
+                    fullSequence = [];
+                    for (let i = 1; i <= 35; i++) {
+                        fullSequence.push(i.toString());
+                    }
+                    break;
+                case 'numbersletters':
+                    fullSequence = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+                    for (let i = 1; i <= 35; i++) {
+                        fullSequence.push(i.toString());
+                    }
+                    break;
+                default:
+                    fullSequence = [];
+            }
+            
+            return fullSequence.slice(0, count);
+        }
+        
+        function getRandomPosition(gameArea, circleSize, existingPositions) {
+            const rect = gameArea.getBoundingClientRect();
+            const maxX = rect.width - circleSize - 20;
+            const maxY = rect.height - circleSize - 20;
+            const minDistance = circleSize + 15;
+            
+            let attempts = 0;
+            let position;
+            
+            do {
+                position = {
+                    x: Math.random() * Math.max(0, maxX) + 10,
+                    y: Math.random() * Math.max(0, maxY) + 10
+                };
+                attempts++;
+                
+                if (attempts > 100) break;
+                
+            } while (existingPositions.some(existingPos => {
+                const distance = Math.sqrt(
+                    Math.pow(position.x - existingPos.x, 2) + 
+                    Math.pow(position.y - existingPos.y, 2)
+                );
+                return distance < minDistance;
+            }));
+            
+            return position;
+        }
+        
+        function createCharacterCircle(char, size, existingPositions) {
+            const circle = document.createElement('div');
+            circle.className = 'character-circle';
+            circle.textContent = char;
+            circle.style.width = size + 'px';
+            circle.style.height = size + 'px';
+            circle.style.fontSize = (size * 0.6) + 'px';
+            
+            const contrast = parseInt(document.getElementById('contrast').value);
+            const textColor = document.getElementById('stimuliColor').value;
+            const bgColor = document.getElementById('bgColor').value;
+            
+            const opacity = contrast / 100;
+            const bgOpacity = Math.max(0.1, opacity * 0.8);
+            const textOpacity = opacity;
+            
+            const textRgb = hexToRgb(textColor);
+            
+            circle.style.backgroundColor = bgColor;
+            circle.style.color = `rgba(${textRgb.r}, ${textRgb.g}, ${textRgb.b}, ${textOpacity})`;
+            circle.style.borderColor = `rgba(${textRgb.r}, ${textRgb.g}, ${textRgb.b}, ${opacity * 0.6})`;
+            
+            const gameArea = document.getElementById('gameArea');
+            const position = getRandomPosition(gameArea, size, existingPositions);
+            circle.style.left = position.x + 'px';
+            circle.style.top = position.y + 'px';
+            
+            const speed = parseInt(document.getElementById('speed').value);
+            circle.moveData = {
+                x: position.x,
+                y: position.y,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                size: size
+            };
+            
+            existingPositions.push(position);
+            
+            circle.addEventListener('click', function() {
+                handleCharacterClick(char, circle);
+            });
+            
+            // Add touch support for mobile
+            circle.addEventListener('touchstart', function(e) {
+                e.preventDefault(); // Prevent double-firing on mobile
+                handleCharacterClick(char, circle);
+            }, { passive: false });
+            
+            return circle;
+        }
+        
+        function updateCharacterPositions() {
+            if (!gameActive) {
+                return;
+            }
+            
+            const gameArea = document.getElementById('gameArea');
+            const rect = gameArea.getBoundingClientRect();
+            const speed = parseInt(document.getElementById('speed').value) * 0.5;
+            
+            characters.forEach((circle, index) => {
+                if (!circle.moveData || circle.classList.contains('correct')) return;
+                
+                circle.moveData.x += circle.moveData.vx * speed;
+                circle.moveData.y += circle.moveData.vy * speed;
+                
+                const margin = 10;
+                const maxX = rect.width - circle.moveData.size - margin;
+                const maxY = rect.height - circle.moveData.size - margin;
+                
+                if (circle.moveData.x <= margin || circle.moveData.x >= maxX) {
+                    circle.moveData.vx *= -1;
+                    circle.moveData.x = Math.max(margin, Math.min(maxX, circle.moveData.x));
+                }
+                
+                if (circle.moveData.y <= margin || circle.moveData.y >= maxY) {
+                    circle.moveData.vy *= -1;
+                    circle.moveData.y = Math.max(margin, Math.min(maxY, circle.moveData.y));
+                }
+                
+                circle.style.left = circle.moveData.x + 'px';
+                circle.style.top = circle.moveData.y + 'px';
+            });
+            
+            if (gameActive) {
+                animationId = requestAnimationFrame(updateCharacterPositions);
+            }
+        }
+        
+        function handleCharacterClick(clickedChar, circleElement) {
+            if (!gameActive) return;
+            
+            const expectedChar = currentSequence[currentIndex];
+            
+            if (clickedChar === expectedChar) {
+                circleElement.classList.add('correct');
+                currentIndex++;
+                
+                setTimeout(() => {
+                    circleElement.remove();
+                    const index = characters.indexOf(circleElement);
+                    if (index > -1) {
+                        characters.splice(index, 1);
+                    }
+                    
+                    updateProgress();
+                    
+                    if (currentIndex >= currentSequence.length) {
+                        gameActive = false;
+                        if (animationId) {
+                            cancelAnimationFrame(animationId);
+                            animationId = null;
+                        }
+                        document.getElementById('completionMessage').style.display = 'block';
+                        document.getElementById('nextChar').textContent = 'Complete!';
+                        
+                        setTimeout(() => {
+                            closeGame();
+                        }, 3000);
+                    } else {
+                        document.getElementById('nextChar').textContent = currentSequence[currentIndex];
+                    }
+                }, 500);
+            } else {
+                circleElement.classList.add('wrong');
+                setTimeout(() => {
+                    circleElement.classList.remove('wrong');
+                }, 500);
+            }
+        }
+        
+        function updateProgress() {
+            document.getElementById('progress').textContent = currentIndex;
+        }
+        
+        function launchGame() {
+            gameActive = true;
+            currentIndex = 0;
+            document.getElementById('completionMessage').style.display = 'none';
+            
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            const gameArea = document.getElementById('gameArea');
+            gameArea.classList.add('active');
+            
+            // Apply background color
+            const bgColor = document.getElementById('bgColor').value;
+            gameArea.style.backgroundColor = bgColor;
+            
+            // Clear existing circles
+            characters.forEach(circle => circle.remove());
+            characters = [];
+            
+            // Get settings
+            const type = document.querySelector('input[name="stimuliType"]:checked').value;
+            const numStimuli = parseInt(document.getElementById('numStimuli').value);
+            const charSize = parseInt(document.getElementById('stimuliSize').value);
+            
+            // Generate sequence
+            currentSequence = generateSequence(type, numStimuli);
+            
+            // Check if reverse sequence is enabled
+            if (document.getElementById('reverseSequence').checked) {
+                currentSequence.reverse();
+            }
+            
+            // Update UI
+            document.getElementById('total').textContent = currentSequence.length;
+            document.getElementById('progress').textContent = '0';
+            document.getElementById('nextChar').textContent = currentSequence[0];
+            
+            setTimeout(() => {
+                const existingPositions = [];
+                currentSequence.forEach(char => {
+                    const circle = createCharacterCircle(char, charSize, existingPositions);
+                    characters.push(circle);
+                    gameArea.appendChild(circle);
+                });
+                
+                // Start movement if speed > 0
+                if (parseInt(document.getElementById('speed').value) > 0) {
+                    updateCharacterPositions();
+                }
+            }, 100);
+        }
+        
+        function closeGame() {
+            const gameArea = document.getElementById('gameArea');
+            gameArea.classList.remove('active');
+            gameActive = false;
+            
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            characters.forEach(circle => circle.remove());
+            characters = [];
+            document.getElementById('nextChar').textContent = '-';
+            document.getElementById('progress').textContent = '0';
+            document.getElementById('total').textContent = '0';
+            document.getElementById('completionMessage').style.display = 'none';
+        }
+        
+        // Initialize on page load
+        window.onload = function() {
+            initializeSliders();
+            updateNumStimuliBasedOnType();
+        };
+    </script>
+</body>
+</html>
