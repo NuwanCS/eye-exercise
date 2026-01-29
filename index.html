@@ -93,7 +93,6 @@
         .control-row {
             display: flex;
             align-items: center;
-            /* justify-content: space-between; */
             padding: 10px 0;
         }
         
@@ -111,7 +110,6 @@
             gap: 15px;
         }
         
-        /* Slider styling to match the image */
         .slider-container {
             display: flex;
             align-items: center;
@@ -190,7 +188,6 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
         
-        /* Color picker styling */
         .color-picker-container {
             display: flex;
             align-items: center;
@@ -216,7 +213,6 @@
             border-radius: 3px;
         }
         
-        /* Radio button styling */
         .radio-group {
             display: flex;
             flex-direction: column;
@@ -243,7 +239,6 @@
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
         }
         
-        /* Checkbox styling */
         .checkbox-group {
             display: flex;
             align-items: center;
@@ -266,7 +261,11 @@
             gap: 8px;
         }
         
-        /* Preview box */
+        .control-row.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        
         .preview-section {
             position: absolute;
             right: 40px;
@@ -288,9 +287,48 @@
             border: 3px solid #4a7ba7;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #0000ff;
+            font-size: 40px;
+            position: relative;
         }
         
-        /* Action buttons */
+        .preview-box::before {
+            content: 'A';
+        }
+        
+        .warning-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 152, 0, 0.95);
+            color: #000000;
+            padding: 15px 30px;
+            border-radius: 8px;
+            border: 2px solid #ff9800;
+            font-weight: bold;
+            font-size: 16px;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            display: none;
+            max-width: 90%;
+            text-align: center;
+        }
+        
+        .warning-message.show {
+            display: block;
+            animation: warningPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes warningPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+        
         .action-buttons {
             display: flex;
             justify-content: center;
@@ -345,15 +383,14 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
         }
         
-        /* Game area */
         .game-area {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
-            width: 100dvw; /* Dynamic viewport for mobile */
+            width: 100dvw;
             height: 100vh;
-            height: 100dvh; /* Dynamic viewport for mobile */
+            height: 100dvh;
             background-color: #2d2d2d;
             z-index: 2000;
             display: none;
@@ -387,6 +424,14 @@
         .close-button:hover {
             background: linear-gradient(135deg, #ff5252 0%, #e53935 100%);
             transform: translateY(-2px);
+        }
+        
+        .rotation-circle {
+            position: absolute;
+            border: 3px solid;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
         }
         
         .character-circle {
@@ -474,24 +519,88 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
         }
         
+        .score-display {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #4a7ba7;
+            border-radius: 8px;
+            padding: 15px 20px;
+            z-index: 9999;
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        
+        .score-display div {
+            margin: 5px 0;
+        }
+        
+        .correct-score {
+            color: #4caf50;
+        }
+        
+        .wrong-score {
+            color: #f44336;
+        }
+        
         .completion-message {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 48px;
-            color: #4caf50;
-            text-align: center;
-            z-index: 10000;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.95);
             padding: 40px 60px;
             border-radius: 15px;
             border: 3px solid #4caf50;
             display: none;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            text-align: center;
+            max-width: 90%;
         }
         
-        /* Responsive adjustments */
+        .completion-message h2 {
+            font-size: 48px;
+            color: #4caf50;
+            margin-bottom: 30px;
+        }
+        
+        .final-score {
+            font-size: 24px;
+            color: #ffffff;
+            margin: 15px 0;
+        }
+        
+        .final-score .label {
+            display: inline-block;
+            min-width: 120px;
+            text-align: right;
+            margin-right: 10px;
+        }
+        
+        .final-score .value {
+            font-weight: bold;
+            font-size: 28px;
+        }
+        
+        .final-score.correct .value {
+            color: #4caf50;
+        }
+        
+        .final-score.wrong .value {
+            color: #f44336;
+        }
+        
+        .final-score.total .value {
+            color: #2196F3;
+        }
+        
+        .final-score.accuracy .value {
+            color: #ff9800;
+        }
+        
         @media (max-width: 1024px) {
             .controls-grid {
                 grid-template-columns: 1fr;
@@ -548,6 +657,18 @@
             .progress-text {
                 font-size: 16px;
             }
+            
+            .completion-message h2 {
+                font-size: 32px;
+            }
+            
+            .final-score {
+                font-size: 18px;
+            }
+            
+            .final-score .value {
+                font-size: 22px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -571,6 +692,11 @@
             
             .control-label {
                 min-width: auto;
+            }
+            
+            .score-display {
+                font-size: 14px;
+                padding: 10px 15px;
             }
         }
     </style>
@@ -608,15 +734,15 @@
                     </div>
                 </div>
                 
-                <!-- Speed -->
+                <!-- Rotation Speed -->
                 <div class="control-row">
-                    <div class="control-label">Speed</div>
+                    <div class="control-label">Rotation Speed</div>
                     <div class="control-input">
                         <div class="slider-container">
                             <button class="slider-button" onclick="adjustValue('speed', -1)">◄</button>
-                            <input type="range" id="speed" min="1" max="10" value="1">
+                            <input type="range" id="speed" min="0" max="20" value="3">
                             <button class="slider-button" onclick="adjustValue('speed', 1)">►</button>
-                            <span class="value-display" id="speedValue">1</span>
+                            <span class="value-display" id="speedValue">3</span>
                         </div>
                     </div>
                 </div>
@@ -679,39 +805,13 @@
             
             <!-- Right Column -->
             <div>
-                <!-- Grid, Tracer, Central Fixation, Central Flash -->
+                <!-- Circle Mode -->
                 <div class="control-row">
-                    <div class="control-label">Grid</div>
+                    <div class="control-label">Circle Mode</div>
                     <div class="control-input">
                         <div class="checkbox-group">
-                            <input type="checkbox" id="grid">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="control-row">
-                    <div class="control-label">Tracer</div>
-                    <div class="control-input">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="tracer">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="control-row">
-                    <div class="control-label">Central Fixation</div>
-                    <div class="control-input">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="centralFixation">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="control-row">
-                    <div class="control-label">Central Flash</div>
-                    <div class="control-input">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="centralFlash">
+                            <input type="checkbox" id="circleMode" checked onchange="toggleCircleMode()">
+                            <label for="circleMode" class="checkbox-label">Enable rotating circle</label>
                         </div>
                     </div>
                 </div>
@@ -727,59 +827,31 @@
                 </div>
                 
                 <!-- Direction -->
-                <div class="control-row">
+                <div class="control-row" id="directionRow">
                     <div class="control-label">Direction</div>
                     <div class="control-input">
                         <div class="radio-group">
                             <div class="radio-option">
-                                <input type="radio" id="dirCW" name="direction" value="cw">
-                                <label for="dirCW">CW</label>
+                                <input type="radio" id="dirCW" name="direction" value="cw" checked>
+                                <label for="dirCW">Clockwise</label>
                             </div>
                             <div class="radio-option">
                                 <input type="radio" id="dirCCW" name="direction" value="ccw">
-                                <label for="dirCCW">CCW</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="dirBoth" name="direction" value="both" checked>
-                                <label for="dirBoth">Both</label>
+                                <label for="dirCCW">Counter-Clockwise</label>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Rotator Size -->
-                <div class="control-row">
-                    <div class="control-label">Rotator Size</div>
+                <!-- Circle Size -->
+                <div class="control-row" id="circleSizeRow">
+                    <div class="control-label">Circle Size</div>
                     <div class="control-input">
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="sizeLarge" name="rotatorSize" value="large" checked>
-                                <label for="sizeLarge">Large</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="sizeSmall" name="rotatorSize" value="small">
-                                <label for="sizeSmall">Small</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Stimuli Persistence -->
-                <div class="control-row">
-                    <div class="control-label">Stimuli Persistence</div>
-                    <div class="control-input">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="stimuliPersistence">
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Reverse Sequence -->
-                <div class="control-row">
-                    <div class="control-label">Reverse Sequence</div>
-                    <div class="control-input">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="reverseSequence">
+                        <div class="slider-container">
+                            <button class="slider-button" onclick="adjustValue('circleSize', -10)">◄</button>
+                            <input type="range" id="circleSize" min="100" max="400" value="250" step="10" style="width: 180px;">
+                            <button class="slider-button" onclick="adjustValue('circleSize', 10)">►</button>
+                            <span class="value-display" id="circleSizeValue">250</span>
                         </div>
                     </div>
                 </div>
@@ -797,6 +869,11 @@
             <button class="btn btn-launch" onclick="launchGame()">Launch</button>
             <button class="btn btn-exit" onclick="window.close()">Exit</button>
         </div>
+        
+        <!-- Warning Message -->
+        <div class="warning-message" id="warningMessage">
+            ⚠️ Warning: Letters may overlap with current settings. Consider reducing Number of Stimuli, increasing Circle Size, or reducing Stimuli Size.
+        </div>
     </div>
     
     <!-- Game Area -->
@@ -808,8 +885,29 @@
                 Progress: <span id="progress">0</span> / <span id="total">0</span>
             </div>
         </div>
+        <div class="score-display" id="scoreDisplay">
+            <div>Score</div>
+            <div class="correct-score">✓ Correct: <span id="correctCount">0</span></div>
+            <div class="wrong-score">✗ Wrong: <span id="wrongCount">0</span></div>
+        </div>
         <div class="completion-message" id="completionMessage">
-            🎉 Congratulations! You've completed the sequence! 🎉
+            <h2>🎉 Congratulations! 🎉</h2>
+            <div class="final-score correct">
+                <span class="label">Correct:</span>
+                <span class="value" id="finalCorrect">0</span>
+            </div>
+            <div class="final-score wrong">
+                <span class="label">Wrong:</span>
+                <span class="value" id="finalWrong">0</span>
+            </div>
+            <div class="final-score total">
+                <span class="label">Total Clicks:</span>
+                <span class="value" id="finalTotal">0</span>
+            </div>
+            <div class="final-score accuracy">
+                <span class="label">Accuracy:</span>
+                <span class="value" id="finalAccuracy">0%</span>
+            </div>
         </div>
     </div>
 
@@ -819,6 +917,118 @@
         let gameActive = false;
         let characters = [];
         let animationId = null;
+        let correctClicks = 0;
+        let wrongClicks = 0;
+        let rotationAngle = 0;
+        let actualCircleRadius = 250; // Store the actual radius being used
+        
+        // Audio context for sound effects
+        let audioContext = null;
+        
+        function updatePreview() {
+            const previewBox = document.getElementById('previewBox');
+            const bgColor = document.getElementById('bgColor').value;
+            const stimuliColor = document.getElementById('stimuliColor').value;
+            const stimuliSize = parseInt(document.getElementById('stimuliSize').value);
+            const contrast = parseInt(document.getElementById('contrast').value);
+            
+            const opacity = contrast / 100;
+            const textRgb = hexToRgb(stimuliColor);
+            
+            previewBox.style.backgroundColor = bgColor;
+            previewBox.style.color = `rgba(${textRgb.r}, ${textRgb.g}, ${textRgb.b}, ${opacity})`;
+            previewBox.style.fontSize = (stimuliSize * 0.6) + 'px';
+            
+            checkOverlapWarning();
+        }
+        
+        function checkOverlapWarning() {
+            const numStimuli = parseInt(document.getElementById('numStimuli').value);
+            const stimuliSize = parseInt(document.getElementById('stimuliSize').value);
+            const circleSize = parseInt(document.getElementById('circleSize').value);
+            const circleMode = document.getElementById('circleMode').checked;
+            
+            const warningMessage = document.getElementById('warningMessage');
+            
+            // Only show warning if circle mode is enabled
+            if (!circleMode) {
+                warningMessage.classList.remove('show');
+                return;
+            }
+            
+            // Calculate if configuration might cause overlaps
+            const minDistance = stimuliSize * 1.5;
+            const circleArea = Math.PI * circleSize * circleSize;
+            const effectiveItemArea = Math.PI * (minDistance / 2) * (minDistance / 2);
+            const maxFitItems = Math.floor(circleArea / effectiveItemArea * 0.6); // 60% packing efficiency
+            
+            if (numStimuli > maxFitItems) {
+                warningMessage.classList.add('show');
+            } else {
+                warningMessage.classList.remove('show');
+            }
+        }
+        
+        function toggleCircleMode() {
+            const circleMode = document.getElementById('circleMode').checked;
+            const speedRow = document.getElementById('speed').closest('.control-row');
+            const directionRow = document.getElementById('directionRow');
+            const circleSizeRow = document.getElementById('circleSizeRow');
+            
+            if (circleMode) {
+                speedRow.classList.remove('disabled');
+                directionRow.classList.remove('disabled');
+                circleSizeRow.classList.remove('disabled');
+            } else {
+                speedRow.classList.add('disabled');
+                directionRow.classList.add('disabled');
+                circleSizeRow.classList.add('disabled');
+            }
+            
+            checkOverlapWarning();
+        }
+        
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+        
+        function playSound(frequency, duration, type = 'sine') {
+            if (!audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+        
+        function playCorrectSound() {
+            // Pleasant ascending tone
+            playSound(523.25, 0.1); // C5
+            setTimeout(() => playSound(659.25, 0.15), 50); // E5
+        }
+        
+        function playWrongSound() {
+            // Dissonant descending tone
+            playSound(300, 0.2, 'square');
+            setTimeout(() => playSound(200, 0.2, 'square'), 100);
+        }
+        
+        function updateScoreDisplay() {
+            document.getElementById('correctCount').textContent = correctClicks;
+            document.getElementById('wrongCount').textContent = wrongClicks;
+        }
         
         // Initialize slider displays
         function initializeSliders() {
@@ -826,6 +1036,7 @@
             updateSliderDisplay('speed');
             updateSliderDisplay('stimuliSize');
             updateSliderDisplay('contrast');
+            updateSliderDisplay('circleSize');
         }
         
         function updateSliderDisplay(id) {
@@ -845,15 +1056,23 @@
             slider.value = newValue;
             updateSliderDisplay(id);
             
-            // Update num stimuli based on selected type
             if (id === 'numStimuli') {
                 updateNumStimuliBasedOnType();
+                checkOverlapWarning();
+            }
+            
+            if (id === 'stimuliSize') {
+                updatePreview();
+            }
+            
+            if (id === 'circleSize') {
+                checkOverlapWarning();
             }
         }
         
-        // Add event listeners for sliders
         document.getElementById('numStimuli').addEventListener('input', function() {
             updateSliderDisplay('numStimuli');
+            checkOverlapWarning();
         });
         
         document.getElementById('speed').addEventListener('input', function() {
@@ -862,13 +1081,31 @@
         
         document.getElementById('stimuliSize').addEventListener('input', function() {
             updateSliderDisplay('stimuliSize');
+            updatePreview();
         });
         
         document.getElementById('contrast').addEventListener('input', function() {
             updateSliderDisplay('contrast');
+            updatePreview();
         });
         
-        // Update num stimuli when type changes
+        document.getElementById('circleSize').addEventListener('input', function() {
+            updateSliderDisplay('circleSize');
+            checkOverlapWarning();
+        });
+        
+        // Add event listeners for preview updates
+        document.getElementById('bgColor').addEventListener('input', updatePreview);
+        document.getElementById('stimuliColor').addEventListener('input', updatePreview);
+        document.getElementById('stimuliSize').addEventListener('input', function() {
+            updateSliderDisplay('stimuliSize');
+            updatePreview();
+        });
+        document.getElementById('contrast').addEventListener('input', function() {
+            updateSliderDisplay('contrast');
+            updatePreview();
+        });
+        
         document.querySelectorAll('input[name="stimuliType"]').forEach(radio => {
             radio.addEventListener('change', updateNumStimuliBasedOnType);
         });
@@ -890,7 +1127,7 @@
                     maxStimuli = 35;
                     break;
                 case 'numbersletters':
-                    maxStimuli = 61; // 26 letters + 35 numbers
+                    maxStimuli = 61;
                     break;
                 default:
                     maxStimuli = 26;
@@ -948,36 +1185,7 @@
             return fullSequence.slice(0, count);
         }
         
-        function getRandomPosition(gameArea, circleSize, existingPositions) {
-            const rect = gameArea.getBoundingClientRect();
-            const maxX = rect.width - circleSize - 20;
-            const maxY = rect.height - circleSize - 20;
-            const minDistance = circleSize + 15;
-            
-            let attempts = 0;
-            let position;
-            
-            do {
-                position = {
-                    x: Math.random() * Math.max(0, maxX) + 10,
-                    y: Math.random() * Math.max(0, maxY) + 10
-                };
-                attempts++;
-                
-                if (attempts > 100) break;
-                
-            } while (existingPositions.some(existingPos => {
-                const distance = Math.sqrt(
-                    Math.pow(position.x - existingPos.x, 2) + 
-                    Math.pow(position.y - existingPos.y, 2)
-                );
-                return distance < minDistance;
-            }));
-            
-            return position;
-        }
-        
-        function createCharacterCircle(char, size, existingPositions) {
+        function createScatteredCharacter(char, size, gameArea, existingCharacters) {
             const circle = document.createElement('div');
             circle.className = 'character-circle';
             circle.textContent = char;
@@ -990,7 +1198,6 @@
             const bgColor = document.getElementById('bgColor').value;
             
             const opacity = contrast / 100;
-            const bgOpacity = Math.max(0.1, opacity * 0.8);
             const textOpacity = opacity;
             
             const textRgb = hexToRgb(textColor);
@@ -999,29 +1206,140 @@
             circle.style.color = `rgba(${textRgb.r}, ${textRgb.g}, ${textRgb.b}, ${textOpacity})`;
             circle.style.borderColor = `rgba(${textRgb.r}, ${textRgb.g}, ${textRgb.b}, ${opacity * 0.6})`;
             
-            const gameArea = document.getElementById('gameArea');
-            const position = getRandomPosition(gameArea, size, existingPositions);
-            circle.style.left = position.x + 'px';
-            circle.style.top = position.y + 'px';
+            // Random position across the screen, avoiding UI elements and other characters
+            const rect = gameArea.getBoundingClientRect();
+            const padding = 60; // Keep away from edges and UI elements
+            const topPadding = 150; // Extra padding at top for progress display
+            const rightPadding = 150; // Extra padding for score display
             
-            const speed = parseInt(document.getElementById('speed').value);
-            circle.moveData = {
-                x: position.x,
-                y: position.y,
-                vx: (Math.random() - 0.5) * 2,
-                vy: (Math.random() - 0.5) * 2,
-                size: size
-            };
+            const minX = padding;
+            const maxX = rect.width - size - rightPadding;
+            const minY = topPadding;
+            const maxY = rect.height - size - padding;
             
-            existingPositions.push(position);
+            const minDistance = size * 1.5; // Minimum distance between characters
+            const maxAttempts = 200;
+            let attempts = 0;
+            let validPosition = false;
+            let posX, posY;
             
-            circle.addEventListener('click', function() {
+            while (!validPosition && attempts < maxAttempts) {
+                posX = Math.random() * (maxX - minX) + minX;
+                posY = Math.random() * (maxY - minY) + minY;
+                
+                // Check if this position overlaps with existing characters
+                validPosition = true;
+                for (let existingChar of existingCharacters) {
+                    const existingRect = existingChar.getBoundingClientRect();
+                    const existingX = parseFloat(existingChar.style.left);
+                    const existingY = parseFloat(existingChar.style.top);
+                    
+                    const dx = posX - existingX;
+                    const dy = posY - existingY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < minDistance) {
+                        validPosition = false;
+                        break;
+                    }
+                }
+                
+                attempts++;
+            }
+            
+            // If no valid position found, use last attempted position
+            circle.style.position = 'absolute';
+            circle.style.left = posX + 'px';
+            circle.style.top = posY + 'px';
+            
+            circle.addEventListener('click', function(e) {
+                e.stopPropagation();
                 handleCharacterClick(char, circle);
             });
             
-            // Add touch support for mobile
             circle.addEventListener('touchstart', function(e) {
-                e.preventDefault(); // Prevent double-firing on mobile
+                e.preventDefault();
+                e.stopPropagation();
+                handleCharacterClick(char, circle);
+            }, { passive: false });
+            
+            return circle;
+        }
+        
+        function createCharacterCircle(char, size, circleRadius, existingCharacters) {
+            const circle = document.createElement('div');
+            circle.className = 'character-circle';
+            circle.textContent = char;
+            circle.style.width = size + 'px';
+            circle.style.height = size + 'px';
+            circle.style.fontSize = (size * 0.6) + 'px';
+            
+            const contrast = parseInt(document.getElementById('contrast').value);
+            const textColor = document.getElementById('stimuliColor').value;
+            const bgColor = document.getElementById('bgColor').value;
+            
+            const opacity = contrast / 100;
+            const textOpacity = opacity;
+            
+            const textRgb = hexToRgb(textColor);
+            
+            circle.style.backgroundColor = bgColor;
+            circle.style.color = `rgba(${textRgb.r}, ${textRgb.g}, ${textRgb.b}, ${textOpacity})`;
+            circle.style.borderColor = `rgba(${textRgb.r}, ${textRgb.g}, ${textRgb.b}, ${opacity * 0.6})`;
+            
+            // Find non-overlapping position within circle
+            const minDistance = size * 1.5; // Increased spacing for better separation
+            const maxAttempts = 200; // Increased attempts
+            let attempts = 0;
+            let validPosition = false;
+            
+            while (!validPosition && attempts < maxAttempts) {
+                const angle = Math.random() * 2 * Math.PI;
+                const maxRadius = circleRadius - size * 0.8; // Keep further from edge
+                const distance = Math.sqrt(Math.random()) * maxRadius * 0.85; // Better distribution
+                
+                const offsetX = distance * Math.cos(angle);
+                const offsetY = distance * Math.sin(angle);
+                
+                // Check if this position overlaps with existing characters
+                validPosition = true;
+                for (let existingChar of existingCharacters) {
+                    const dx = offsetX - existingChar.offsetX;
+                    const dy = offsetY - existingChar.offsetY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < minDistance) {
+                        validPosition = false;
+                        break;
+                    }
+                }
+                
+                if (validPosition) {
+                    circle.offsetX = offsetX;
+                    circle.offsetY = offsetY;
+                }
+                
+                attempts++;
+            }
+            
+            // If no valid position found after max attempts, place it anyway (fallback)
+            if (!validPosition) {
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = Math.sqrt(Math.random()) * (circleRadius - size) * 0.6;
+                circle.offsetX = distance * Math.cos(angle);
+                circle.offsetY = distance * Math.sin(angle);
+            }
+            
+            circle.charSize = size;
+            
+            circle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                handleCharacterClick(char, circle);
+            });
+            
+            circle.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 handleCharacterClick(char, circle);
             }, { passive: false });
             
@@ -1033,32 +1351,51 @@
                 return;
             }
             
+            const circleMode = document.getElementById('circleMode').checked;
+            
+            // Only rotate if circle mode is enabled
+            if (!circleMode) {
+                return;
+            }
+            
             const gameArea = document.getElementById('gameArea');
             const rect = gameArea.getBoundingClientRect();
-            const speed = parseInt(document.getElementById('speed').value) * 0.5;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
             
+            const circleRadius = parseInt(document.getElementById('circleSize').value);
+            const speed = parseInt(document.getElementById('speed').value);
+            const direction = document.querySelector('input[name="direction"]:checked').value;
+            
+            // Update rotation angle based on speed and direction (much slower)
+            const rotationSpeed = speed * 0.0015; // Reduced from 0.003 to 0.0015
+            if (direction === 'cw') {
+                rotationAngle += rotationSpeed;
+            } else {
+                rotationAngle -= rotationSpeed;
+            }
+            
+            // Rotate the circle border
+            const rotationCircle = document.getElementById('rotationCircle');
+            if (rotationCircle) {
+                rotationCircle.style.transform = `translate(-50%, -50%) rotate(${rotationAngle}rad)`;
+            }
+            
+            // Update each character position (rotate around center)
             characters.forEach((circle, index) => {
-                if (!circle.moveData || circle.classList.contains('correct')) return;
+                if (circle.classList.contains('correct')) return;
                 
-                circle.moveData.x += circle.moveData.vx * speed;
-                circle.moveData.y += circle.moveData.vy * speed;
+                // Apply rotation to the offset
+                const cos = Math.cos(rotationAngle);
+                const sin = Math.sin(rotationAngle);
+                const rotatedX = circle.offsetX * cos - circle.offsetY * sin;
+                const rotatedY = circle.offsetX * sin + circle.offsetY * cos;
                 
-                const margin = 10;
-                const maxX = rect.width - circle.moveData.size - margin;
-                const maxY = rect.height - circle.moveData.size - margin;
+                const x = centerX + rotatedX - circle.charSize / 2;
+                const y = centerY + rotatedY - circle.charSize / 2;
                 
-                if (circle.moveData.x <= margin || circle.moveData.x >= maxX) {
-                    circle.moveData.vx *= -1;
-                    circle.moveData.x = Math.max(margin, Math.min(maxX, circle.moveData.x));
-                }
-                
-                if (circle.moveData.y <= margin || circle.moveData.y >= maxY) {
-                    circle.moveData.vy *= -1;
-                    circle.moveData.y = Math.max(margin, Math.min(maxY, circle.moveData.y));
-                }
-                
-                circle.style.left = circle.moveData.x + 'px';
-                circle.style.top = circle.moveData.y + 'px';
+                circle.style.left = x + 'px';
+                circle.style.top = y + 'px';
             });
             
             if (gameActive) {
@@ -1072,6 +1409,10 @@
             const expectedChar = currentSequence[currentIndex];
             
             if (clickedChar === expectedChar) {
+                correctClicks++;
+                playCorrectSound();
+                updateScoreDisplay();
+                
                 circleElement.classList.add('correct');
                 currentIndex++;
                 
@@ -1090,17 +1431,16 @@
                             cancelAnimationFrame(animationId);
                             animationId = null;
                         }
-                        document.getElementById('completionMessage').style.display = 'block';
-                        document.getElementById('nextChar').textContent = 'Complete!';
-                        
-                        setTimeout(() => {
-                            closeGame();
-                        }, 3000);
+                        showCompletionMessage();
                     } else {
                         document.getElementById('nextChar').textContent = currentSequence[currentIndex];
                     }
                 }, 500);
             } else {
+                wrongClicks++;
+                playWrongSound();
+                updateScoreDisplay();
+                
                 circleElement.classList.add('wrong');
                 setTimeout(() => {
                     circleElement.classList.remove('wrong');
@@ -1108,13 +1448,49 @@
             }
         }
         
+        function handleBackgroundClick(e) {
+            if (!gameActive) return;
+            
+            // Only count as wrong click if clicking on the game area background
+            if (e.target.id === 'gameArea') {
+                wrongClicks++;
+                playWrongSound();
+                updateScoreDisplay();
+            }
+        }
+        
         function updateProgress() {
             document.getElementById('progress').textContent = currentIndex;
         }
         
+        function showCompletionMessage() {
+            const totalClicks = correctClicks + wrongClicks;
+            const accuracy = totalClicks > 0 ? ((correctClicks / totalClicks) * 100).toFixed(1) : 0;
+            
+            document.getElementById('finalCorrect').textContent = correctClicks;
+            document.getElementById('finalWrong').textContent = wrongClicks;
+            document.getElementById('finalTotal').textContent = totalClicks;
+            document.getElementById('finalAccuracy').textContent = accuracy + '%';
+            
+            document.getElementById('completionMessage').style.display = 'block';
+            document.getElementById('nextChar').textContent = 'Complete!';
+            
+            setTimeout(() => {
+                closeGame();
+            }, 5000);
+        }
+        
         function launchGame() {
+            // Initialize audio context on user interaction
+            initAudioContext();
+            
             gameActive = true;
             currentIndex = 0;
+            correctClicks = 0;
+            wrongClicks = 0;
+            rotationAngle = 0; // Reset rotation angle
+            updateScoreDisplay();
+            
             document.getElementById('completionMessage').style.display = 'none';
             
             if (animationId) {
@@ -1125,43 +1501,75 @@
             const gameArea = document.getElementById('gameArea');
             gameArea.classList.add('active');
             
-            // Apply background color
+            // Add click listener for background
+            gameArea.addEventListener('click', handleBackgroundClick);
+            gameArea.addEventListener('touchstart', handleBackgroundClick);
+            
             const bgColor = document.getElementById('bgColor').value;
             gameArea.style.backgroundColor = bgColor;
             
-            // Clear existing circles
+            // Clear existing elements
             characters.forEach(circle => circle.remove());
             characters = [];
+            const existingCircle = document.getElementById('rotationCircle');
+            if (existingCircle) existingCircle.remove();
             
-            // Get settings
             const type = document.querySelector('input[name="stimuliType"]:checked').value;
             const numStimuli = parseInt(document.getElementById('numStimuli').value);
             const charSize = parseInt(document.getElementById('stimuliSize').value);
+            const circleMode = document.getElementById('circleMode').checked;
             
-            // Generate sequence
             currentSequence = generateSequence(type, numStimuli);
             
-            // Check if reverse sequence is enabled
-            if (document.getElementById('reverseSequence').checked) {
-                currentSequence.reverse();
-            }
-            
-            // Update UI
             document.getElementById('total').textContent = currentSequence.length;
             document.getElementById('progress').textContent = '0';
             document.getElementById('nextChar').textContent = currentSequence[0];
             
             setTimeout(() => {
-                const existingPositions = [];
-                currentSequence.forEach(char => {
-                    const circle = createCharacterCircle(char, charSize, existingPositions);
-                    characters.push(circle);
-                    gameArea.appendChild(circle);
-                });
-                
-                // Start movement if speed > 0
-                if (parseInt(document.getElementById('speed').value) > 0) {
+                if (circleMode) {
+                    // Circle mode - create rotating circle with characters inside
+                    const circleSize = parseInt(document.getElementById('circleSize').value);
+                    const stimuliColor = document.getElementById('stimuliColor').value;
+                    
+                    // Calculate responsive circle radius based on screen size
+                    const rect = gameArea.getBoundingClientRect();
+                    const minDimension = Math.min(rect.width, rect.height);
+                    const maxCircleRadius = (minDimension * 0.4); // 40% of smallest dimension
+                    const circleRadius = Math.min(circleSize, maxCircleRadius);
+                    actualCircleRadius = circleRadius; // Store for rotation function
+                    
+                    // Create the visible circle border
+                    const rotationCircle = document.createElement('div');
+                    rotationCircle.id = 'rotationCircle';
+                    rotationCircle.className = 'rotation-circle';
+                    rotationCircle.style.borderColor = stimuliColor;
+                    rotationCircle.style.width = (circleRadius * 2) + 'px';
+                    rotationCircle.style.height = (circleRadius * 2) + 'px';
+                    rotationCircle.style.left = '50%';
+                    rotationCircle.style.top = '50%';
+                    rotationCircle.style.transform = 'translate(-50%, -50%)';
+                    gameArea.appendChild(rotationCircle);
+                    
+                    // Create characters spread inside the circle with collision detection
+                    const existingCharacters = [];
+                    currentSequence.forEach((char) => {
+                        const circle = createCharacterCircle(char, charSize, circleRadius, existingCharacters);
+                        characters.push(circle);
+                        existingCharacters.push(circle);
+                        gameArea.appendChild(circle);
+                    });
+                    
+                    // Start rotation animation
                     updateCharacterPositions();
+                } else {
+                    // Scattered mode - place characters randomly across screen
+                    const existingCharacters = [];
+                    currentSequence.forEach((char) => {
+                        const circle = createScatteredCharacter(char, charSize, gameArea, existingCharacters);
+                        characters.push(circle);
+                        existingCharacters.push(circle);
+                        gameArea.appendChild(circle);
+                    });
                 }
             }, 100);
         }
@@ -1171,6 +1579,10 @@
             gameArea.classList.remove('active');
             gameActive = false;
             
+            // Remove background click listener
+            gameArea.removeEventListener('click', handleBackgroundClick);
+            gameArea.removeEventListener('touchstart', handleBackgroundClick);
+            
             if (animationId) {
                 cancelAnimationFrame(animationId);
                 animationId = null;
@@ -1178,16 +1590,24 @@
             
             characters.forEach(circle => circle.remove());
             characters = [];
+            
+            const rotationCircle = document.getElementById('rotationCircle');
+            if (rotationCircle) rotationCircle.remove();
+            
             document.getElementById('nextChar').textContent = '-';
             document.getElementById('progress').textContent = '0';
             document.getElementById('total').textContent = '0';
             document.getElementById('completionMessage').style.display = 'none';
+            
+            correctClicks = 0;
+            wrongClicks = 0;
+            updateScoreDisplay();
         }
         
-        // Initialize on page load
         window.onload = function() {
             initializeSliders();
             updateNumStimuliBasedOnType();
+            updatePreview();
         };
     </script>
 </body>
